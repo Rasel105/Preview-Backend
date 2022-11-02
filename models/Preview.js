@@ -1,5 +1,11 @@
 const mongoose = require("mongoose");
 
+// email Validation  
+const validateEmail = function(email) {
+    const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return regex.test(email);
+  };
+
 // Schema Design 
 const previewSchema = mongoose.Schema({
     name: {
@@ -10,20 +16,37 @@ const previewSchema = mongoose.Schema({
         minLength: [3, "Name must be at least 3 character"],
         maxLength: [100, "Name is too Large"],
     },
+    age: {
+        type: Number,
+        required: true,
+        min: [0, "Age can't be negative"],
+    },
+    phone: {
+        type: Number,
+        required: true,
+    },
     description: {
         type: String,
         required: true,
     },
-    price: {
-        type: Number,
+    company: {
+        type: String,
         required: true,
-        min: [0, "Price can't be negative"],
+    },
+    email: {
+        type: String,
+        trim: true,
+        lowercase: true,
+        unique: true,
+        required: 'Email address is required',
+        validate: [validateEmail, 'Please fill a valid email address'],
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
     },
     status: {
         type: String,
         required: true,
         enum: {
-            values: ["in-stock", "out-stock", "discountinued"],
+            values: ["Published", "Not-Published"],
             message: "Status can't be {VALUE}"
         }
     },
