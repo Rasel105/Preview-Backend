@@ -20,7 +20,7 @@ module.exports.saveAPreview = async (req, res, next) => {
     try {
         const db = getDb();
         const preview = req.body;
-        const result = await db.collection("previews").insertOne(preview);
+        const result = await db.collection("new-preview").insertOne(preview);
         if (!result.insertedId) {
             return res.status(400).send({ status: false, error: "Something went wrong" });
         }
@@ -53,6 +53,23 @@ module.exports.getAPreview = async (req, res, next) => {
 };
 
 
+module.exports.getSavedPreview = async (req, res, next) => {
+    try {
+        const db = getDb();
+        const email = req.params;
+        const preview = await db
+            .collection("new-preview")
+            .find(email)
+            .toArray();
+
+        res.status(200).json({ success: true, data: preview });
+        res.send(data);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 module.exports.updatePreview = async (req, res, next) => {
     try {
         const db = getDb();
@@ -78,7 +95,7 @@ module.exports.deletePreview = async (req, res, next) => {
         if (!ObjectId.isValid(id)) {
             return res.status(400).json({ success: false, error: "NOT a valid preview ID" })
         }
-        const preview = await db.collection("previews").deleteOne({ _id: ObjectId(id) });
+        const preview = await db.collection("new-preview").deleteOne({ _id: ObjectId(id) });
 
         if (!preview.deletedCount) {
             return res.status(400).json({ success: false, error: "Couldn't delete the preview" })

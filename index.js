@@ -4,6 +4,7 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
 const previewRoutes = require("./routes/preview.route");
+const newPreview = require("./routes/newPreview.route");
 const errorHandler = require("./middleware/errorHandler");
 const { connectToServer } = require("./utils/dbConnect");
 
@@ -21,6 +22,7 @@ connectToServer((err) => {
 });
 
 app.use('/api/v1/prevew-data', previewRoutes);
+app.use('/api/v1/single-preview', newPreview);
 
 app.all("*", (req, res) => {
   res.send("No routes found");
