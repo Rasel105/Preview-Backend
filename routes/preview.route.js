@@ -1,13 +1,16 @@
 const express = require("express");
+const previewController = require("../controllers/preview.controller");
+
 const router = express.Router();
-const previewController = require('../controllers/preview.controller');
 
-router.route('/')
+router
+    .route('/')
     .get(previewController.getAllPreview)
-    .post(previewController.createPreview)
-
-router.route('/:id')
-    .patch(previewController.updatePreviewById)
-    .delete(previewController.deletePreviewById)
+    .post(previewController.saveAPreview);
+router
+    .route("/:id")
+    .get(previewController.getAPreview)
+    .patch(previewController.updatePreview)
+    .delete(previewController.deletePreview)
 
 module.exports = router;

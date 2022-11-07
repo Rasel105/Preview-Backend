@@ -1,8 +1,6 @@
 [
     {
-        "_id": "6360ad4fbf4b1e9a9b2a0c0e",
         "picture": "http://placehold.it/32x32",
-        "age": 36,
         "name": "Rasel",
         "company": "DYMI",
         "email": "mallorystafford@dymi.com",
@@ -11,9 +9,7 @@
         "description": "Test Description"
     },
     {
-        "_id": "6360ad4f37facee26e9cd4fb",
         "picture": "http://placehold.it/32x32",
-        "age": 20,
         "name": "Rakib",
         "company": "KINETICUT",
         "email": "kristyswanson@kineticut.com",
@@ -22,9 +18,7 @@
         "description": "Test Description"
     },
     {
-        "_id": "6360ad4ff487c0fdf6d5d905",
         "picture": "http://placehold.it/32x32",
-        "age": 20,
         "name": "Habib",
         "company": "BULLJUICE",
         "email": "arlenedennis@bulljuice.com",
@@ -33,9 +27,7 @@
         "description": "Test Description"
     },
     {
-        "_id": "6360ad4f91c697f39b668ecc",
         "picture": "http://placehold.it/32x32",
-        "age": 36,
         "name": "Nihar",
         "company": "UNI",
         "email": "leticiacotton@uni.com",
@@ -44,9 +36,7 @@
         "description": "Test Description"
     },
     {
-        "_id": "6360ad4fe2e2e47126b5dead",
         "picture": "http://placehold.it/32x32",
-        "age": 33,
         "name": "Rashed",
         "company": "EVENTAGE",
         "email": "vaughanparker@eventage.com",

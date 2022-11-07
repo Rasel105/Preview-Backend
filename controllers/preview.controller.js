@@ -1,84 +1,91 @@
-const { getPreviewService, createPreviewService, updatePreviewByIdService, deletePreviewByIdService } = require("../services/preview.services");
+const { ObjectId } = require("mongodb");
+const { getDb } = require("../utils/dbConnect");
 
-exports.getAllPreview = async (req, res, next) => {
+module.exports.getAllPreview = async (req, res, next) => {
     try {
-        const previews = await getPreviewService();
+        const db = getDb();
+        const previews = await db
+            .collection("previews")
+            .find({})
+            .toArray();
 
-        res.status(200).json({
-            status: "Success",
-            data: previews,
-        })
+        res.status(200).json({ success: true, data: previews });
+
     } catch (error) {
-        res.status(400).json({
-            status: "Failed",
-            message: "Can't get data",
-            error: error.message
-        })
+        next(error)
     }
 };
 
-exports.createPreview = async (req, res, next) => {
+module.exports.saveAPreview = async (req, res, next) => {
     try {
-        // Save and create 
-        const result = await createPreviewService(req.body);
-
-        result.logger();
-
-        res.status(200).json({
-            status: "Success",
-            message: "Data inserted successfully",
-            data: result,
-        });
-    } catch (error) {
-        res.status(400).json({
-            status: "Failed",
-            message: "Data is not inserted",
-            error: error.message,
-        })
-    }
-};
-
-exports.updatePreviewById = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const result = await updatePreviewByIdService(id, req.body);
-        res.status(200).json({
-            status: "Success",
-            message: "Data updated successfully",
-            data: result
-        });
-    } catch (error) {
-        res.status(400).json({
-            status: "Failed",
-            message: "Coudn't update the product",
-            error: error.message,
-        })
-    }
-};
-
-exports.deletePreviewById = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const result = await deletePreviewByIdService(id);
-
-        if (!result.deletedCount) {
-            return res.status(400).json({
-                status: "Failed",
-                error: "Coudn't delete the product"
-            })
+        const db = getDb();
+        const preview = req.body;
+        const result = await db.collection("previews").insertOne(preview);
+        if (!result.insertedId) {
+            return res.status(400).send({ status: false, error: "Something went wrong" });
         }
-
-        res.status(200).json({
-            status: "Success",
-            message: "Data deleted successfully",
-            data: result,
+        res.send({
+            success: true,
+            message: `Preview added with id: ${result.insertedId}`
         })
+    } catch (error) {
+        next(error);
+    }
+};
+
+module.exports.getAPreview = async (req, res, next) => {
+    try {
+        const db = getDb();
+        const { id } = req.params;
+        console.log(id);
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, error: "NOT a valid preview ID" })
+        }
+        const preview = await db.collection("previews").findOne({ _id: ObjectId(id) });
+        if (!preview) {
+            return res.status(400).json({ success: false, error: "Couldn't find preview with this ID" })
+        }
+        res.status(200).json({ success: true, data: preview });
 
     } catch (error) {
-        res.status(400).json({
-            status: "Failded",
-            message: "Couldn't delete the product",
-            error: error.message,
-        })
+        next(error)
     }
-}
+};
+
+
+module.exports.updatePreview = async (req, res, next) => {
+    try {
+        const db = getDb();
+        const { id } = req.params;
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, error: "NOT a valid priview ID" })
+        }
+        const tool = await db.collection("previews").updateOne({ _id: ObjectId(id) }, { $set: req.body });
+        if (!tool.modifiedCount) {
+            return res.status(400).json({ success: false, error: "Couldn't update the preview" })
+        }
+        res.status(200).json({ success: true, message: "Successfully updated the preview" });
+
+    } catch (error) {
+        next(error)
+    }
+};
+
+module.exports.deletePreview = async (req, res, next) => {
+    try {
+        const db = getDb();
+        const { id } = req.params;
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, error: "NOT a valid preview ID" })
+        }
+        const preview = await db.collection("previews").deleteOne({ _id: ObjectId(id) });
+
+        if (!preview.deletedCount) {
+            return res.status(400).json({ success: false, error: "Couldn't delete the preview" })
+        }
+        res.status(200).json({ success: true, message: "Succefully deleted the preview" });
+
+    } catch (error) {
+        next(error)
+    }
+};
